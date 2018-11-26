@@ -14,6 +14,7 @@ steps:
   - script: docker build -f Dockerfile -t docker_failed_image .
     displayName: 'docker build'
     timeoutInMinutes: 0
+    continueOnError: true
   - script: docker login -u $(DockerHub_user) -p $(DockerHub_password)
   # Try to tag the latest failed image we ran if it failed
   - script: docker tag `docker ps -a -l -q | xargs docker commit | awk -F":" '{print $2}'` $(DockerHub_user)/docker_failed_image:latest
