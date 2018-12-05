@@ -60,11 +60,11 @@ jobs:
     # Make a release
     - script: python -m pip install --upgrade pip setuptools wheel
       displayName: 'Install tools'
-    - script: python -m pip install githubrelease
+    - script: python -m pip install --user githubrelease
     - bash: |
         export DATE=$(date -I'minutes' | sed 's/+/plus/g'| sed 's/:/at/g')
         export RELEASE_TAG=${DATE}
         export RELEASE_FILE_NAME=gentoo_on_tmp-${PLATFORM}_${DATE}.tar.gz
         export RELEASE_NAME=${RELEASE_FILE_NAME}
         mv $HOME/gentoo_on_tmp.tar.gz ${RELEASE_FILE_NAME}
-        githubrelease --github-token $(GitHub_Token) release awesomebytes/test_dockerfile_failing create ${RELEASE_TAG} --publish --name ${RELEASE_NAME} "${RELEASE_FILE_NAME}"
+        .local/bin/githubreleasegithubrelease --github-token $(GitHub_Token) release awesomebytes/test_dockerfile_failing create ${RELEASE_TAG} --publish --name ${RELEASE_NAME} "${RELEASE_FILE_NAME}"
