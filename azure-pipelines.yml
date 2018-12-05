@@ -5,7 +5,7 @@
 
 jobs:
   - job: run_test
-    timeoutInMinutes: 1
+    timeoutInMinutes: 15
 
     pool:
       # name: magiclab
