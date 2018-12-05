@@ -39,7 +39,7 @@ jobs:
     # - script: docker login -u $(DockerHub_user) -p $(DockerHub_password)
     #   displayName: 'docker login'
 
-    - script: cd package_stage && docker build -f Dockerfile2 -t $(DockerHub_user)/$(docker_image_name) .
+    - script: docker build -f Dockerfile2 -t $(DockerHub_user)/$(docker_image_name) .
       displayName: 'docker build package_stage'
       # This means up to 6h
       timeoutInMinutes: 0
