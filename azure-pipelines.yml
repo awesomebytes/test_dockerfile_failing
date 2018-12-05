@@ -58,7 +58,8 @@ jobs:
     # Not really needed
     # - script: docker rm -v $id
     # Make a release
-    - script: pip install --user --upgrade pip
+    - script: python -m pip install --upgrade pip setuptools wheel
+      displayName: 'Install tools'
     - script: pip install --user githubrelease
     - bash: |
         export DATE=$(date -I'minutes' | sed 's/+/plus/g'| sed 's/:/at/g')
