@@ -21,3 +21,47 @@ jobs:
       - script: docker tag `docker ps -a -l -q | xargs docker commit | awk -F":" '{print $2}'` $(DockerHub_user)/docker_failed_image:$(Build.BuildId)
       # Push it, if it failed
       - script: docker push $(DockerHub_user)/docker_failed_image
+
+
+  - job: package_stage
+    timeoutInMinutes: 0
+    dependsOn: "run_test"
+
+    pool:
+      vmImage: 'Ubuntu 16.04'
+
+    variables:
+      docker_image_name: release_test
+      platform: amd64
+
+    steps:
+    # # The variables are set on the Build options on the web interface
+    # - script: docker login -u $(DockerHub_user) -p $(DockerHub_password)
+    #   displayName: 'docker login'
+
+    - script: cd package_stage && docker build -f Dockerfile2 -t $(DockerHub_user)/$(docker_image_name) .
+      displayName: 'docker build package_stage'
+      # This means up to 6h
+      timeoutInMinutes: 0
+      # Even if it fails I want to push the image to DockerHub for inspection
+      continueOnError: true
+    # # Try to tag the latest failed image we ran
+    # - script: docker tag `docker ps -a -l -q | xargs docker commit | awk -F":" '{print $2}'` $(DockerHub_user)/$(docker_image_name):$(Build.BuildId)
+    #   displayName: 'create image to push to DockerHub'
+    # Push it
+    # - script: docker push $(DockerHub_user)/$(docker_image_name)
+    #   displayName: 'push image to DockerHub'
+    # Create a temporal container to copy the gentoo_on_tmp.tar.gz
+    - script: id=$(docker create $(DockerHub_user)/$(docker_image_name))
+    - script: docker cp $id:gentoo_on_tmp.tar.gz $HOME
+    # Not really needed
+    # - script: docker rm -v $id
+    # Make a release
+    - script: pip install --user githubrelease
+    - bash: |
+    export DATE=$(date -I'minutes' | sed 's/+/plus/g'| sed 's/:/at/g')
+    export RELEASE_TAG=${DATE}
+    export RELEASE_FILE_NAME=gentoo_on_tmp-${PLATFORM}_${DATE}.tar.gz
+    export RELEASE_NAME=${RELEASE_FILE_NAME}
+    mv gentoo_on_tmp.tar.gz ${RELEASE_FILE_NAME}
+    githubrelease --github-token $(GitHub_Token) release awesomebytes/test_dockerfile_failing create ${RELEASE_TAG} --publish --name ${RELEASE_NAME} "${RELEASE_FILE_NAME}"

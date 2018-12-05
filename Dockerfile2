@@ -1,0 +1,6 @@
+FROM awesomebytes/docker_failed_image
+
+# Create the .tar.gz
+RUN cd /tmp; tar cvzf gentoo_on_tmp.tar.gz gentoo
+
+ENTRYPOINT ["/bin/bash"]
