@@ -1,5 +1,8 @@
 FROM awesomebytes/docker_failed_image
 
+RUN mkdir -p /tmp/gentoo
+RUN touch /tmp/gentoo/test.txt
+
 # Create the .tar.gz
 RUN cd /tmp; tar cvzf gentoo_on_tmp.tar.gz gentoo
 

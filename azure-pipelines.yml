@@ -4,28 +4,28 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 jobs:
-  - job: run_test
-    timeoutInMinutes: 15
+  # - job: run_test
+  #   timeoutInMinutes: 15
 
-    pool:
-      # name: magiclab
-      vmImage: 'Ubuntu 16.04'
+  #   pool:
+  #     # name: magiclab
+  #     vmImage: 'Ubuntu 16.04'
 
-    steps:
-      - script: docker build -f Dockerfile -t docker_failed_image .
-        displayName: 'docker build'
-        timeoutInMinutes: 0
-        continueOnError: true
-      - script: docker login -u $(DockerHub_user) -p $(DockerHub_password)
-      # Try to tag the latest failed image we ran if it failed
-      - script: docker tag `docker ps -a -l -q | xargs docker commit | awk -F":" '{print $2}'` $(DockerHub_user)/docker_failed_image:$(Build.BuildId)
-      # Push it, if it failed
-      - script: docker push $(DockerHub_user)/docker_failed_image
+  #   steps:
+  #     - script: docker build -f Dockerfile -t docker_failed_image .
+  #       displayName: 'docker build'
+  #       timeoutInMinutes: 0
+  #       continueOnError: true
+  #     - script: docker login -u $(DockerHub_user) -p $(DockerHub_password)
+  #     # Try to tag the latest failed image we ran if it failed
+  #     - script: docker tag `docker ps -a -l -q | xargs docker commit | awk -F":" '{print $2}'` $(DockerHub_user)/docker_failed_image:$(Build.BuildId)
+  #     # Push it, if it failed
+  #     - script: docker push $(DockerHub_user)/docker_failed_image
 
 
   - job: package_stage
     timeoutInMinutes: 0
-    dependsOn: "run_test"
+    # dependsOn: "run_test"
 
     pool:
       vmImage: 'Ubuntu 16.04'
