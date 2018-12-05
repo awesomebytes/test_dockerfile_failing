@@ -54,7 +54,7 @@ jobs:
     # Create a temporal container to copy the gentoo_on_tmp.tar.gz
     - script: |
         id=$(docker create $(DockerHub_user)/$(docker_image_name))
-        docker cp $id:gentoo_on_tmp.tar.gz $HOME
+        docker cp $id:/tmp/gentoo_on_tmp.tar.gz $HOME
     # Not really needed
     # - script: docker rm -v $id
     # Make a release
