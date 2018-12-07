@@ -45,6 +45,18 @@ jobs:
       timeoutInMinutes: 0
       # Even if it fails I want to push the image to DockerHub for inspection
       continueOnError: true
+    - script: cat nofile.txt
+      name: failing_step
+      continueOnError: true
+    - script: ls
+      name: success_step
+      dependsOn: failing_step
+      condition: failed()
+    - script: ls
+      dependsOn: success_step
+      condition: always()
+
+
     # # Try to tag the latest failed image we ran
     # - script: docker tag `docker ps -a -l -q | xargs docker commit | awk -F":" '{print $2}'` $(DockerHub_user)/$(docker_image_name):$(Build.BuildId)
     #   displayName: 'create image to push to DockerHub'
@@ -52,21 +64,21 @@ jobs:
     # - script: docker push $(DockerHub_user)/$(docker_image_name)
     #   displayName: 'push image to DockerHub'
     # Create a temporal container to copy the gentoo_on_tmp.tar.gz
-    - script: |
-        id=$(docker create $(DockerHub_user)/$(docker_image_name))
-        docker cp $id:/tmp/gentoo_on_tmp.tar.gz $HOME
-    # Not really needed
-    # - script: docker rm -v $id
-    # Make a release
-    - script: python -m pip install --upgrade pip setuptools wheel
-      displayName: 'Install tools'
-    - script: python -m pip install --user githubrelease
-    - bash: |
-        export DATE=$(date -I'minutes' | sed 's/+/plus/g'| sed 's/:/at/g')
-        export RELEASE_TAG=${release/DATE}
-        export RELEASE_FILE_NAME=gentoo_on_tmp-${PLATFORM}_${DATE}.tar.gz
-        export RELEASE_NAME=${RELEASE_FILE_NAME}
-        mv $HOME/gentoo_on_tmp.tar.gz ${RELEASE_FILE_NAME}
-        export PATH=$HOME/.local/bin:$PATH
-        export PYTHONPATH=$HOME/.local/lib/python2.7/site-packages:$PYTHONPATH
-        githubrelease --github-token $(GitHub_Token) release $(Build.Repository.Name) create ${RELEASE_TAG} --publish --name ${RELEASE_NAME} "${RELEASE_FILE_NAME}"
+    # - script: |
+    #     id=$(docker create $(DockerHub_user)/$(docker_image_name))
+    #     docker cp $id:/tmp/gentoo_on_tmp.tar.gz $HOME
+    # # Not really needed
+    # # - script: docker rm -v $id
+    # # Make a release
+    # - script: python -m pip install --upgrade pip setuptools wheel
+    #   displayName: 'Install tools'
+    # - script: python -m pip install --user githubrelease
+    # - bash: |
+    #     export DATE=$(date -I'minutes' | sed 's/+/plus/g'| sed 's/:/at/g')
+    #     export RELEASE_TAG=${release/DATE}
+    #     export RELEASE_FILE_NAME=gentoo_on_tmp-${PLATFORM}_${DATE}.tar.gz
+    #     export RELEASE_NAME=${RELEASE_FILE_NAME}
+    #     mv $HOME/gentoo_on_tmp.tar.gz ${RELEASE_FILE_NAME}
+    #     export PATH=$HOME/.local/bin:$PATH
+    #     export PYTHONPATH=$HOME/.local/lib/python2.7/site-packages:$PYTHONPATH
+    #     githubrelease --github-token $(GitHub_Token) release $(Build.Repository.Name) create ${RELEASE_TAG} --publish --name ${RELEASE_NAME} "${RELEASE_FILE_NAME}"

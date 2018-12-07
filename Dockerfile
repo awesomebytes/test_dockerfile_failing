@@ -10,6 +10,6 @@ RUN cat /proc/meminfo
 RUN df -h
 
 # Command that fails
-RUN asdf
+#RUN asdf
 
 ENTRYPOINT ["/bin/bash"]
