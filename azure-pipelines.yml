@@ -50,10 +50,8 @@ jobs:
       continueOnError: true
     - script: ls
       name: success_step
-      dependsOn: failing_step
       condition: failed()
     - script: ls
-      dependsOn: success_step
       condition: always()
 
 
