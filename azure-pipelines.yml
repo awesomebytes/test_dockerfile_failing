@@ -47,7 +47,7 @@ jobs:
       continueOnError: true
     - script: cat nofile.txt
       name: failing_step
-      continueOnError: true
+      # continueOnError: true
     - script: ls
       name: success_step
       condition: failed()
