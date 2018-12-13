@@ -39,20 +39,20 @@ jobs:
     # - script: docker login -u $(DockerHub_user) -p $(DockerHub_password)
     #   displayName: 'docker login'
 
-    - script: docker build -f Dockerfile2 -t $(DockerHub_user)/$(docker_image_name) .
+    - script: docker build -f Dockerfile3 -t $(DockerHub_user)/$(docker_image_name) .
       displayName: 'docker build package_stage'
       # This means up to 6h
       timeoutInMinutes: 0
       # Even if it fails I want to push the image to DockerHub for inspection
-      continueOnError: true
-    - script: cat nofile.txt
-      name: failing_step
-      # continueOnError: true
-    - script: ls
-      name: success_step
-      condition: failed()
-    - script: ls
-      condition: always()
+    #   continueOnError: true
+    # - script: cat nofile.txt
+    #   name: failing_step
+    #   # continueOnError: true
+    # - script: ls
+    #   name: success_step
+    #   condition: failed()
+    # - script: ls
+    #   condition: always()
 
 
     # # Try to tag the latest failed image we ran
